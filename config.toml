@@ -1,0 +1,3 @@
+baseURL = 'https://blog.the-bot.place/'
+languageCode = 'en-gb'
+title = 'Bot Blog'
