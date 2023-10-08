@@ -1,6 +1,19 @@
 {{ if .Page.Store.Get "hasMermaid" }}
   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <script>
-    mermaid.initialize({ startOnLoad: true });
+      mermaid.initialize({
+          startOnLoad: true,
+           theme: 'base',
+           themeVariables: {
+              darkMode: true,
+              primaryColor: '#db5793',
+              primaryTextColor: '#fff',
+              primaryBorderColor: '#4f4f4f',
+              lineColor: '#F8B229',
+              secondaryColor: '#f00',
+              tertiaryColor: '#272822',
+              fontFamily: 'Jetbrains Mono'
+          }
+      });
   </script>
 {{ end }}
