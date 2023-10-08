@@ -6,13 +6,15 @@ draft: true
 
 [libgdx-java-base](https://github.com/fourlastor/libgdx-java-base) is my GitHub starter template for [LibGDX](https://libgdx.com/) games. This is a series of posts looking at the project architecture.
 
+This is the first post of the series, and I'll go over my dependency injection strategy.
+
 ## Common grounds
 
-A class `A` _depends_ on `B` when it relies on `B` to provide its functionality.
+A class `A` **depends** on another class `B` when it relies on `B` to provide its functionality.
 
 If `A` depends on `B`, `B` is a _dependency_ of `A`.
 
-A dependency is _injected_ when its initialization happens _outside_ the class depending on it.
+A dependency is _injected_ when its initialization happens **outside** the class depending on it.
 
 In our example, `B` is injected in `A` if it's initialized outside of it:
 
@@ -70,7 +72,7 @@ public class GdxGame extends Game {
 
 Dagger knows how to provide `Dependency` to `GdxGame`, but how do we obtain a reference to start up the whole project? We would need some sort of entry point.
 
-In Dagger these entry points are called a _components_, and are defined in code by the `@Component` annotation.
+In Dagger these entry points are called _components_, and are defined in code by the `@Component` annotation.
 
 ```java
 @Component
@@ -81,7 +83,7 @@ public interface GameComponent {
 
 Dagger will generate the class `DaggerGameComponent`, implementing `GameComponent`. Since `GdxGame` has an annotated constructor, the method `game()` will return a new instance of it using said constructor, and will create a `Dependency` instance to pass to the constructor.
 
-I usually avoid exposing dagger-specific classes, and create static factory methods to access them: 
+I usually avoid exposing Dagger-specific classes, and create static factory methods to access them: 
 
 ```java
 @Component
@@ -104,7 +106,7 @@ public class GdxGame extends Game {
 public class DesktopLauncher {
 
     public static void main(String[] arg) {
-        GdxGame game = GdxGame.createGame();
+        GdxGame game = GdxGame.create();
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         // ... setup config
         new Lwjgl3Application(game, config);
@@ -114,7 +116,7 @@ public class DesktopLauncher {
 
 ## How many games are enough games? A tale of singletons
 
-Usually, we want only one instance of `GdxGame` to be available at all times, even if we require it again. Dagger has a `@Singleton` annotation meant for this use:
+Usually, we want only **one** instance of `GdxGame` to be available at all times, even if we require it again. Dagger has a `@Singleton` annotation meant for this use:
 
 ```java
 @Singleton
@@ -135,9 +137,9 @@ In our example, `GameComponent` represents the whole application, so there will 
 
 ## Modules and building bridges
 
-Dagger requires an annotation to be present for a dependency to be included in the graph, and this requires to be able to _edit_ such class. This works as long as the class is part of the project, and so we can add the annotation to it, how do we include a class coming from a library?
+Dagger requires an annotation to be present for a dependency to be included in the graph, and this requires to be able to **edit** such class. This works as long as the class is part of the project, and so we can add the annotation to it, how do we include a class coming from a library?
 
-Dagger uses _modules_ to solve this. Similar to components, modules are defined in code by the annotation `@Module`. Every method annotated with `@Provides` in the module will be available to Dagger.
+We can use _modules_ to solve this. Similar to components, modules are defined in code by the `@Module` annotation. Every method within a module annotated with `@Provides`, will be included in the dependency graph.
 
 ```java
 @Module
