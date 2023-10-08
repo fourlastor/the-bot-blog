@@ -136,3 +136,51 @@ In our example, `GameComponent` represents the whole application, so there will 
 ## Modules and building bridges
 
 Dagger requires an annotation to be present for a dependency to be included in the graph, and this requires to be able to _edit_ such class. This works as long as the class is part of the project, and so we can add the annotation to it, how do we include a class coming from a library?
+
+Dagger uses _modules_ to solve this. Similar to components, modules are defined in code by the annotation `@Module`. Every method annotated with `@Provides` in the module will be available to Dagger.
+
+```java
+@Module
+public class GdxModule {
+
+    @Provides
+    @Singleton
+    public InputMultiplexer inputMultiplexer() {
+        return new InputMultiplexer();
+    }
+}
+
+@Singleton
+public class GdxGame {
+    
+    private final InputMultiplexer multiplexer;
+    
+    @Inject public GdxGame(InputMultiplexer multiplexer) {
+        this.multiplexer = multiplexer;
+    }
+
+    @Override
+    public void create() {
+        Gdx.input.setInputProcessor(multiplexer);
+    }
+}
+
+public class GameScreen extends ScreenAdapter {
+
+    private final InputMultiplexer multiplexer;
+    private final Stage stage = new Stage();
+
+    @Inject public GameScreen(InputMultiplexer multiplexer) {
+        this.multiplexer = multiplexer;
+    }
+
+    @Override
+    public void show() {
+        multiplexer.addProcessor(stage);
+    }
+    @Override
+    public void hide() {
+        multiplexer.removeProcessor(stage);
+    }
+}
+```
