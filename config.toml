@@ -1,4 +1,8 @@
 baseURL = 'https://blog.the-bot.place/'
 languageCode = 'en-gb'
 title = 'Bot Blog'
-theme = 'ficurinia'
+theme = 'hugo-ficurinia'
+[params]
+  logo = '/logo.png'
+  favicon = '/favicon.png'
+  icon512 = '/logo.png'
